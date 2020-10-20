@@ -128,7 +128,7 @@ VVCTRE_PLUGIN_EXPORT const char** GetRequiredFunctionNames() {
 
 VVCTRE_PLUGIN_EXPORT void PluginLoaded(void* core, void* plugin_manager,
                                        void* required_functions[]) {
-    vvctre_settings_set_limit_speed = (vvctre_settings_set_limit_speed_t)required_functions[01];
+    vvctre_settings_set_limit_speed = (vvctre_settings_set_limit_speed_t)required_functions[0];
     vvctre_settings_get_limit_speed = (vvctre_settings_get_limit_speed_t)required_functions[1];
     vvctre_settings_set_speed_limit = (vvctre_settings_set_speed_limit_t)required_functions[2];
     vvctre_settings_get_speed_limit = (vvctre_settings_get_speed_limit_t)required_functions[3];
@@ -287,6 +287,10 @@ VVCTRE_PLUGIN_EXPORT void InitialSettingsOpening() {
 }
 
 VVCTRE_PLUGIN_EXPORT void EmulatorClosing() {
+    if (!json["write_when_emulator_is_closing"].get<bool>()) {
+        return;
+    }
+
     int length = wai_getExecutablePath(nullptr, 0, nullptr);
     std::string vvctre_folder(length, '\0');
     int dirname_length = 0;
@@ -295,9 +299,9 @@ VVCTRE_PLUGIN_EXPORT void EmulatorClosing() {
 
     std::ofstream file;
 #ifdef _MSC_VER
-    file.open(Common::UTF8ToUTF16W(vvctre_folder + "\\settings"), std::ofstream::trunc);
+    file.open(Common::UTF8ToUTF16W(vvctre_folder + "\\settings.json"), std::ofstream::trunc);
 #else
-    file.open(vvctre_folder + "/settings", std::ofstream::trunc);
+    file.open(vvctre_folder + "/settings.json", std::ofstream::trunc);
 #endif
 
     if (!file.fail()) {
@@ -400,6 +404,6 @@ VVCTRE_PLUGIN_EXPORT void EmulatorClosing() {
                 json["layout"]["upright_screens"] = vvctre_settings_get_upright_screens();
             }
         }
-        file << json.dump(4);
+        file << json.dump(2);
     }
 }

@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    tags:
+      - "*"
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  build:
+    runs-on: ${{matrix.os}}
+    strategy:
+      matrix:
+        os: [windows-2019, ubuntu-18.04]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - uses: ilammy/msvc-dev-cmd@v1
+      - name: Configure CMake
+        shell: bash
+        run: |
+          cd $GITHUB_WORKSPACE
+          mkdir build && cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        working-directory: ./build
+        shell: bash
+        run: cmake --build . --config Release
+      - name: Prepare to upload
+        if: github.event_name == 'push'
+        shell: bash
+        run: |
+          cd $GITHUB_WORKSPACE
+          export VERSION=${GITHUB_REF:10}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            mv ./build/bin/Release/make-settings-persistent.dll .
+            7z a vvctre-plugin-make-settings-persistent-$VERSION-${{runner.os}}.7z make-settings-persistent.dll license.txt settings.json
+          else
+            mv ./build/bin/Release/make-settings-persistent.so .
+            7z a vvctre-plugin-make-settings-persistent-$VERSION-${{runner.os}}.7z make-settings-persistent.so license.txt settings.json
+          fi
+      - name: Upload to GitHub Releases
+        if: github.event_name == 'push'
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{secrets.GITHUB_TOKEN}}
+          file: vvctre-plugin-make-settings-persistent-${{env.VERSION}}-${{runner.os}}.7z
+          asset_name: vvctre-plugin-make-settings-persistent-${{env.VERSION}}-${{runner.os}}.7z
+          tag: ${{github.ref}}
+          overwrite: true
+      - name: Upload artifact
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v1
+        with:
+          name: vvctre-plugin-make-settings-persistent-${{runner.os}}
+          path: .

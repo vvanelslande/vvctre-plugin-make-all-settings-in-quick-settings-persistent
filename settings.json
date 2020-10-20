@@ -1,4 +1,5 @@
 {
+  "write_when_emulator_is_closing": true,
   "general": {
     "limit_speed": true,
     "speed_limit": 100,
