@@ -1,0 +1,27 @@
+{
+  "general": {
+    "limit_speed": true,
+    "speed_limit": 100,
+    "use_custom_cpu_ticks": false,
+    "custom_cpu_ticks": 77,
+    "cpu_clock_percentage": 100
+  },
+  "audio": {
+    "output": {
+      "volume": 1.0
+    }
+  },
+  "graphics": {
+    "resolution": 1,
+    "post_processing_shader": "none (builtin)",
+    "texture_filter": "none",
+    "3d_mode": "Off",
+    "3d_factor": 0
+  },
+  "layout": {
+    "layout": "Default",
+    "use_custom_layout": false,
+    "swap_screens": false,
+    "upright_screens": false
+  }
+}
