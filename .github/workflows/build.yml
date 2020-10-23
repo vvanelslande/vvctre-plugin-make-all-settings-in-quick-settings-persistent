@@ -37,24 +37,24 @@ jobs:
           export VERSION=${GITHUB_REF:10}
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           if [ "$RUNNER_OS" == "Windows" ]; then
-            mv ./build/bin/Release/make-settings-persistent.dll .
-            7z a vvctre-plugin-make-settings-persistent-$VERSION-${{runner.os}}.7z make-settings-persistent.dll license.txt settings.json
+            mv ./build/bin/Release/make-all-settings-in-quick-settings-persistent.dll .
+            7z a vvctre-plugin-make-all-settings-in-quick-settings-persistent-$VERSION-${{runner.os}}.7z make-all-settings-in-quick-settings-persistent.dll license.txt
           else
-            mv ./build/bin/Release/make-settings-persistent.so .
-            7z a vvctre-plugin-make-settings-persistent-$VERSION-${{runner.os}}.7z make-settings-persistent.so license.txt settings.json
+            mv ./build/bin/Release/make-all-settings-in-quick-settings-persistent.so .
+            7z a vvctre-plugin-make-all-settings-in-quick-settings-persistent-$VERSION-${{runner.os}}.7z make-all-settings-in-quick-settings-persistent.so license.txt
           fi
       - name: Upload to GitHub Releases
         if: github.event_name == 'push'
         uses: svenstaro/upload-release-action@v1-release
         with:
           repo_token: ${{secrets.GITHUB_TOKEN}}
-          file: vvctre-plugin-make-settings-persistent-${{env.VERSION}}-${{runner.os}}.7z
-          asset_name: vvctre-plugin-make-settings-persistent-${{env.VERSION}}-${{runner.os}}.7z
+          file: vvctre-plugin-make-all-settings-in-quick-settings-persistent-${{env.VERSION}}-${{runner.os}}.7z
+          asset_name: vvctre-plugin-make-all-settings-in-quick-settings-persistent-${{env.VERSION}}-${{runner.os}}.7z
           tag: ${{github.ref}}
           overwrite: true
       - name: Upload artifact
         if: github.event_name == 'pull_request'
         uses: actions/upload-artifact@v1
         with:
-          name: vvctre-plugin-make-settings-persistent-${{runner.os}}
+          name: vvctre-plugin-make-all-settings-in-quick-settings-persistent-${{runner.os}}
           path: .
