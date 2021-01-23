@@ -58,35 +58,26 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
-      - name: Set version output, create 7z files, and create zip files
-        id: step3
+      - id: tag
+        uses: dawidd6/action-get-tag@v1.0.0
+      - uses: rlespinasse/git-commit-data-action@1.1.0
+      - name: Create .7z and .zip files
         run: |
-          version=${GITHUB_REF:10}
-          echo "::set-output name=version::$version"
-
           cd windows
-          7z a vvctre-plugin-make-all-settings-in-quick-settings-persistent-$version-windows.7z make-all-settings-in-quick-settings-persistent.dll license.txt
-          7z a vvctre-plugin-make-all-settings-in-quick-settings-persistent-$version-windows.zip make-all-settings-in-quick-settings-persistent.dll license.txt
+          7z a vvctre-plugin-make-all-settings-in-quick-settings-persistent-${{steps.tag.outputs.tag}}-windows.7z make-all-settings-in-quick-settings-persistent.dll license.txt
+          7z a vvctre-plugin-make-all-settings-in-quick-settings-persistent-${{steps.tag.outputs.tag}}-windows.zip make-all-settings-in-quick-settings-persistent.dll license.txt
 
           cd ../linux
-          7z a vvctre-plugin-make-all-settings-in-quick-settings-persistent-$version-linux.7z make-all-settings-in-quick-settings-persistent.so license.txt
-          7z a vvctre-plugin-make-all-settings-in-quick-settings-persistent-$version-linux.zip make-all-settings-in-quick-settings-persistent.so license.txt
-      - name: Set commit_body output
-        id: step4
-        uses: actions/github-script@v3
-        with:
-          script: |
-            const child_process = require('child_process')
-            const commitBody = child_process.execSync('git log -1 --pretty="%b"', { cwd: process.env.GITHUB_WORKSPACE, encoding: 'utf8' })
-            core.setOutput('commit_body', commitBody.slice(0, -1))
+          7z a vvctre-plugin-make-all-settings-in-quick-settings-persistent-${{steps.tag.outputs.tag}}-linux.7z make-all-settings-in-quick-settings-persistent.so license.txt
+          7z a vvctre-plugin-make-all-settings-in-quick-settings-persistent-${{steps.tag.outputs.tag}}-linux.zip make-all-settings-in-quick-settings-persistent.so license.txt
       - id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         with:
           tag_name: ${{github.ref}}
-          release_name: ${{steps.step3.outputs.version}}
-          body: ${{steps.step4.outputs.commit_body}}
+          release_name: ${{steps.tag.outputs.tag}}
+          body: ${{env.GIT_COMMIT_MESSAGE_BODY}}
           draft: false
           prerelease: false
       - name: Upload Windows 7z
@@ -95,8 +86,8 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         with:
           upload_url: ${{steps.create_release.outputs.upload_url}}
-          asset_path: ./windows/vvctre-plugin-make-all-settings-in-quick-settings-persistent-${{steps.step3.outputs.version}}-windows.7z
-          asset_name: vvctre-plugin-make-all-settings-in-quick-settings-persistent-${{steps.step3.outputs.version}}-windows.7z
+          asset_path: ./windows/vvctre-plugin-make-all-settings-in-quick-settings-persistent-${{steps.tag.outputs.tag}}-windows.7z
+          asset_name: vvctre-plugin-make-all-settings-in-quick-settings-persistent-${{steps.tag.outputs.tag}}-windows.7z
           asset_content_type: application/x-7z-compressed
       - name: Upload Windows zip
         uses: actions/upload-release-asset@v1
@@ -104,8 +95,8 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         with:
           upload_url: ${{steps.create_release.outputs.upload_url}}
-          asset_path: ./windows/vvctre-plugin-make-all-settings-in-quick-settings-persistent-${{steps.step3.outputs.version}}-windows.zip
-          asset_name: vvctre-plugin-make-all-settings-in-quick-settings-persistent-${{steps.step3.outputs.version}}-windows.zip
+          asset_path: ./windows/vvctre-plugin-make-all-settings-in-quick-settings-persistent-${{steps.tag.outputs.tag}}-windows.zip
+          asset_name: vvctre-plugin-make-all-settings-in-quick-settings-persistent-${{steps.tag.outputs.tag}}-windows.zip
           asset_content_type: application/zip
       - name: Upload Linux 7z
         uses: actions/upload-release-asset@v1
@@ -113,8 +104,8 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         with:
           upload_url: ${{steps.create_release.outputs.upload_url}}
-          asset_path: ./linux/vvctre-plugin-make-all-settings-in-quick-settings-persistent-${{steps.step3.outputs.version}}-linux.7z
-          asset_name: vvctre-plugin-make-all-settings-in-quick-settings-persistent-${{steps.step3.outputs.version}}-linux.7z
+          asset_path: ./linux/vvctre-plugin-make-all-settings-in-quick-settings-persistent-${{steps.tag.outputs.tag}}-linux.7z
+          asset_name: vvctre-plugin-make-all-settings-in-quick-settings-persistent-${{steps.tag.outputs.tag}}-linux.7z
           asset_content_type: application/x-7z-compressed
       - name: Upload Linux zip
         uses: actions/upload-release-asset@v1
@@ -122,6 +113,6 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         with:
           upload_url: ${{steps.create_release.outputs.upload_url}}
-          asset_path: ./linux/vvctre-plugin-make-all-settings-in-quick-settings-persistent-${{steps.step3.outputs.version}}-linux.zip
-          asset_name: vvctre-plugin-make-all-settings-in-quick-settings-persistent-${{steps.step3.outputs.version}}-linux.zip
+          asset_path: ./linux/vvctre-plugin-make-all-settings-in-quick-settings-persistent-${{steps.tag.outputs.tag}}-linux.zip
+          asset_name: vvctre-plugin-make-all-settings-in-quick-settings-persistent-${{steps.tag.outputs.tag}}-linux.zip
           asset_content_type: application/zip
