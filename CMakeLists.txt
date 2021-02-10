@@ -21,4 +21,4 @@ add_subdirectory(json EXCLUDE_FROM_ALL)
 add_library(vvctre-plugin-make-all-settings-in-quick-settings-persistent SHARED plugin.cpp string_util.cpp string_util.h common_types.h)
 target_link_libraries(vvctre-plugin-make-all-settings-in-quick-settings-persistent PRIVATE whereami nlohmann_json)
 
-set_target_properties(vvctre-plugin-make-all-settings-in-quick-settings-persistent PROPERTIES PREFIX "" OUTPUT_NAME "make-all-settings-in-quick-settings-persistent")
+set_target_properties(vvctre-plugin-make-all-settings-in-quick-settings-persistent PROPERTIES PREFIX "" OUTPUT_NAME make-all-settings-in-quick-settings-persistent)
