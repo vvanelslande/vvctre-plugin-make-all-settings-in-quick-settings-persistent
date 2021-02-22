@@ -183,9 +183,9 @@ VVCTRE_PLUGIN_EXPORT void InitialSettingsOpening() {
 
     std::ifstream file;
 #ifdef _MSC_VER
-    file.open(Common::UTF8ToUTF16W(vvctre_folder + "\\settings.json"));
+    file.open(Common::UTF8ToUTF16W(vvctre_folder + "\\quick-settings.json"));
 #else
-    file.open(vvctre_folder + "/settings.json");
+    file.open(vvctre_folder + "/quick-settings.json");
 #endif
 
     if (!file.fail()) {
@@ -299,9 +299,9 @@ VVCTRE_PLUGIN_EXPORT void EmulatorClosing() {
 
     std::ofstream file;
 #ifdef _MSC_VER
-    file.open(Common::UTF8ToUTF16W(vvctre_folder + "\\settings.json"), std::ofstream::trunc);
+    file.open(Common::UTF8ToUTF16W(vvctre_folder + "\\quick-settings.json"), std::ofstream::trunc);
 #else
-    file.open(vvctre_folder + "/settings.json", std::ofstream::trunc);
+    file.open(vvctre_folder + "/quick-settings.json", std::ofstream::trunc);
 #endif
 
     if (!file.fail()) {
