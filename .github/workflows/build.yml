@@ -34,9 +34,9 @@ jobs:
           cd $GITHUB_WORKSPACE
           mkdir artifact
           if [ "$RUNNER_OS" == "Windows" ]; then
-            cp ./build/bin/Release/make-all-settings-in-quick-settings-persistent.dll artifact/
+            cp ./build/bin/Release/quick-settings-file.dll artifact/
           else
-            cp ./build/bin/Release/make-all-settings-in-quick-settings-persistent.so artifact/
+            cp ./build/bin/Release/quick-settings-file.so artifact/
           fi
           cp license.txt artifact/
       - name: Upload artifact
